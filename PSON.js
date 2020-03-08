@@ -34,7 +34,7 @@ stringify() - serializes an object into PSON. All objects are ignored.
 */
 
 const is = require('./glschar');
-const dbg = require('./glsdebug');
+const dbg = require('glstools').debug;
 var Map = require("collections/map");
 
 const USEMAP = true;
@@ -105,17 +105,21 @@ module.exports = {
         } else {
             throw Error(`line ${i + 1}: missing colon in "${line}"`); // throw an error if we MUST have a colon
         }
-        while ((typeof value === String) && value.endsWith('\\')) {
+        while (value.endsWith('\\')) {
             value = value.substring(0, value.length - 1); // remove backslash
             let [line, next] = this._getLine(lines, i);
             i = next;
             value += line.trim(); // append next line
             i++;
         }
-        if (value[0] === '{' || value[0] === '[' || value[0] === '(') {
-            let result = this._parseMain(value, lines, i);
+        if (value === '{' || value === '[' || value === '(') {
+            let result = this._parseMain(value, lines, i); // multi-line object
             value = result.obj;
             i = result.i;
+        } else if (value[0] === '{' || value[0] === '[' || value[0] === '(') {
+            let result = this._parseMain(value, lines, i); // single-line object
+            value = result.obj;
+            // i = result.i; don't change the line number
         } else {
             value = this._escape(value);
         }
@@ -126,21 +130,6 @@ module.exports = {
         dbg.begin();
         let { key, value, next } = this._parseKeyValue(currentLine, lines, i);
         i = next;
-        if (value === '{' || value === '[' || value === '(') { // we're creating a multi-line array or object
-            let result = this._parseMain(value, lines, i);
-            i = result.i;
-            value = result.obj;
-            dbg.end();
-            return { key, value, i };
-        // } else if (value === "") { // the type of object is on the next line
-        //     i++;
-        //     let [line, next] = this._getLine(lines, i);
-        //     let result = this._parseMain(line, lines, next);
-        //     i = result.i;
-        //     value = result.obj;
-        //     dbg.end();
-        //     return { key, value, i };
-        }
         i++;
         dbg.end();
         return { key, value, i };
