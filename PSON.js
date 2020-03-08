@@ -106,14 +106,16 @@ module.exports = {
         } else {
             throw Error(`line ${i + 1}: missing colon in "${line}"`); // throw an error if we MUST have a colon
         }
-        // while (value.endsWith('\\')) {
-        //     value = value.substring(0, value.length - 1); // remove backslash
-        //     dbg.verbose(i);
-        //     let [line, next] = this._getLine(lines, i);
-        //     i = next;
-        //     value += line.trim(); // append next line
-        //     i++;
-        // }
+        dbg.verbose(value);
+        while (value.endsWith('\\')) {
+            value = value.substring(0, value.length - 1); // remove backslash
+            dbg.verbose(i);
+            dbg.verbose(value);
+            let [line, next] = this._getLine(lines, i);
+            i = next;
+            value += line.trim(); // append next line
+            //i++;
+        }
         if (value === '{' || value === '[' || value === '(') {
             let [obj, next] = this._parseMain(value, lines, i); // multi-line object
             dbg.verbose(next);
@@ -124,8 +126,7 @@ module.exports = {
             value = obj;
             dbg.verbose(next);
             dbg.verbose(i);
-
-            // i = result.i; don't change the line number
+            i = next;
         } else {
             value = this._escape(value);
         }
@@ -138,6 +139,8 @@ module.exports = {
         let [ key, value, next ] = this._parseKeyValue(currentLine, lines, i);
         i = next;
         i++;
+        dbg.verbose(next);
+        dbg.verbose(i);
         dbg.end();
         return [ key, value, i ];
     },
@@ -210,7 +213,7 @@ module.exports = {
             let line = currentLine.substring(1, currentLine.length - 1);
             let items = this._split(line, ',').map(item => this._escape(item.trim()));
             for (let j = 0; j < items.length; j++) {
-                let { key, value, next } = this._parseKeyValue(items[j], lines, i);
+                let [ key, value, next ] = this._parseKeyValue(items[j], lines, i);
                 i = next;
                 obj.push([key, value]);
             }
@@ -229,9 +232,9 @@ module.exports = {
                 i++;
                 break;
             } else if (is.var(line[0])) {
-                let foo = this._parseKeyValues(line, lines, i);
-                obj.push([foo.key, foo.value]);
-                i = foo.i;
+                let [key, value, next] = this._parseKeyValues(line, lines, i);
+                obj.push([key, value]);
+                i = next;
             } else {
                 throw `line: ${i + 1}: parse error in "${line}"`;
             }
