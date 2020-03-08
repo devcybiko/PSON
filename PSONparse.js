@@ -1,3 +1,6 @@
+//
+// read a PSON file and spit out the corresponding JSON
+//
 const PSON = require('./PSON');
 const glsfiles = require('glstools').files;
 

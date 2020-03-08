@@ -1,3 +1,7 @@
+  //
+  // a simple test to create a flat PSON object
+  // with comments and a long line created with escaped newlines
+  //
   {
     fullSongFname: data/music/10secs-1960s.mp3/Spanky_&_Our_Gang@Sunday_Will_Never_Be_the_Same@Spanky_and_Our_Gang.mp3
     source: Casey Kasem

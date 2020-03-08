@@ -1,4 +1,5 @@
 [
+    // some more tests including various comments
     // beginning of line comment ignored
   {
       array: [a,b,c\s,d\], foo\,bar\,baz, wil\sson\spicket, http://google.com] // comment ignored

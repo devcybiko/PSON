@@ -1,4 +1,6 @@
 (
+    // a test of one-line Lists (which are ordered 
+    // lists of key:value pairs
   form1: (fname: text, lname: text, street:text, city:text, state:text, zip:text, phone:text, submit:button)
   form2: \
   (

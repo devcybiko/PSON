@@ -272,5 +272,7 @@ module.exports = {
         let [obj, next] = this._parseMain(line, lines, i);
         dbg.end();
         return obj;
-    }
+    },
+    stringify: function(obj) {
+        if (typeof obj
 }

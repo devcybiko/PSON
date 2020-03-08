@@ -1,4 +1,4 @@
-[
+[ // an array of objects including a couple of arrays
   {
     fullSongFname: data/music/10secs-1960s.mp3/The_Lovin'_Spoonful@Darling_Be_Home_Soon@Anthology.mp3
     source: Casey Kasem
