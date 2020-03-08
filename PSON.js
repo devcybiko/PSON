@@ -274,5 +274,5 @@ module.exports = {
         return obj;
     },
     stringify: function(obj) {
-        if (typeof obj
+    }
 }
