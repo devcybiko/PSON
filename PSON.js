@@ -94,6 +94,7 @@ module.exports = {
     },
     _parseKeyValue: function (line, lines, i) {
         dbg.begin();
+        dbg.verbose(i);
         let colon = line.indexOf(':');
         let key, value;
         if (colon > 0) {
@@ -114,26 +115,31 @@ module.exports = {
         //     i++;
         // }
         if (value === '{' || value === '[' || value === '(') {
-            let result = this._parseMain(value, lines, i); // multi-line object
-            value = result.obj;
-            i = result.i;
+            let [obj, next] = this._parseMain(value, lines, i); // multi-line object
+            dbg.verbose(next);
+            value = obj;
+            i = next;
         } else if (value[0] === '{' || value[0] === '[' || value[0] === '(') {
-            let result = this._parseMain(value, lines, i); // single-line object
-            value = result.obj;
+            let [obj, next] = this._parseMain(value, lines, i); // single-line object
+            value = obj;
+            dbg.verbose(next);
+            dbg.verbose(i);
+
             // i = result.i; don't change the line number
         } else {
             value = this._escape(value);
         }
+        dbg.verbose(i);
         dbg.end();
-        return { key, value, i };
+        return [ key, value, i ];
     },
     _parseKeyValues: function (currentLine, lines, i) {
         dbg.begin();
-        let { key, value, next } = this._parseKeyValue(currentLine, lines, i);
+        let [ key, value, next ] = this._parseKeyValue(currentLine, lines, i);
         i = next;
         i++;
         dbg.end();
-        return { key, value, i };
+        return [ key, value, i ];
     },
     _parseObject: function (currentLine, lines, i) { // parses one object and returns that object and index
         dbg.begin();
@@ -142,13 +148,13 @@ module.exports = {
             let line = currentLine.substring(1, currentLine.length - 1);
             let items = this._split(line, ',').map(item => this._escape(item.trim()));
             for (let j = 0; j < items.length; j++) {
-                let { key, value, next } = this._parseKeyValue(items[j], lines, i);
+                let [ key, value, next ] = this._parseKeyValue(items[j], lines, i);
                 i = next;
                 USEMAP ? obj.set(key, value) : obj[key] = value;
             }
             i++;
             dbg.end();
-            return { obj, i };
+            return [ obj, i ];
         }
         i++;
         while (true) {
@@ -166,7 +172,7 @@ module.exports = {
             }
         }
         dbg.end();
-        return { obj, i }
+        return [ obj, i ]
     },
     _parseArray: function (currentLine, lines, i) { // parses one object and returns that object and index
         dbg.begin();
@@ -175,11 +181,11 @@ module.exports = {
             let line = currentLine.substring(1, currentLine.length - 1);
             let items = this._split(line, ',').map(item => this._escape(item.trim()));
             i++;
-            return { obj: items, i };
+            return [ items, i ]
         }
         i++;
         while (true) {
-            let {line, next} = this._getLine(lines, i);
+            let [line, next] = this._getLine(lines, i);
             i = next;
             if (line === ']') {
                 i++;
@@ -194,7 +200,7 @@ module.exports = {
             }
         }
         dbg.end();
-        return { obj, i }
+        return [ obj, i ]
     },
     _parseList: function (currentLine, lines, i) { // parses one object and returns that object and index
         dbg.begin();
@@ -209,8 +215,11 @@ module.exports = {
                 obj.push([key, value]);
             }
             i++;
+            dbg.verbose(obj);
+            dbg.verbose(i);
+    
             dbg.end();
-            return { obj, i };
+            return [ obj, i ];
         }
         i++;
         while (true) {
@@ -227,9 +236,10 @@ module.exports = {
                 throw `line: ${i + 1}: parse error in "${line}"`;
             }
         }
-        dbg.verbose({ obj, i });
+        dbg.verbose(obj);
+        dbg.verbose(i);
         dbg.end();
-        return { obj, i }
+        return [ obj, i ]
     },
 
     _getLine: function (lines, i) {
@@ -276,8 +286,8 @@ module.exports = {
         let lines = s.trim().split('\n');
         lines = this._preprocessLines(lines);
         let [line, i] = this._getLine(lines, 0);
-        let result = this._parseMain(line, lines, i);
+        let [obj, next] = this._parseMain(line, lines, i);
         dbg.end();
-        return result.obj;
+        return obj;
     }
 }
