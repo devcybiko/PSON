@@ -102,7 +102,7 @@ module.exports = {
         } else {
             throw Error(`line ${i + 1}: missing colon in "${line}"`); // throw an error if we MUST have a colon
         }
-        if (value.startsWith('{') || value.startsWith("[")) {
+        if (value.startsWith('{') || value.startsWith('[') || value.startsWith('(')) {
             value = this._parseMain(value, lines, i);
             value = value.obj;
         } else {
@@ -118,7 +118,7 @@ module.exports = {
             let result = this._parseMain(value, lines, i);
             i = result.i;
             value = result.obj;
-            dbg.begin();
+            dbg.end();
             return { key, value, i };
         }
         i++;
@@ -180,7 +180,7 @@ module.exports = {
             if (line === ']') {
                 i++;
                 break;
-            } else if (line[0] === '{' || line[0] === '[') {
+            } else if (line[0] === '{' || line[0] === '[' || line[0] === '(') {
                 let foo = this._parseMain(line, lines, i);
                 obj.push(foo.obj);
                 i = foo.i;
@@ -195,30 +195,35 @@ module.exports = {
     _parseList: function (currentLine, lines, i) { // parses one object and returns that object and index
         dbg.begin();
         let list = [];
+        list._isList = true; // this little hack will allow us to distinguish a list from an array
         if (currentLine.endsWith(')')) { // handle one-line entry
             let line = currentLine.substring(1, currentLine.length - 1);
             let items = this._split(line, ',').map(item => this._escape(item.trim()));
+            for (let j = 0; j < items.length; j++) {
+                let { key, value } = this._parseKeyValue(items[j], lines, i);
+                list.push([key, value]);
+            }
             i++;
-            return { obj: items, i };
+            dbg.end();
+            return { list, i };
         }
         i++;
         while (true) {
             let [line, next] = this._getLine(lines, i);
             i = next;
-            if (line === ']') {
+            if (line === ')') {
                 i++;
                 break;
-            } else if (line[0] === '{' || line[0] === '[') {
-                let foo = this._parseMain(line, lines, i);
-                obj.push(foo.obj);
+            } else if (is.var(line[0])) {
+                let foo = this._parseKeyValues(line, lines, i);
+                list.push([foo.key, foo.value]);
                 i = foo.i;
-            } else { // must be text
-                obj.push(this._escape(line));
-                i++;
+            } else {
+                throw `line: ${i + 1}: parse error in "${line}"`;
             }
         }
         dbg.end();
-        return { obj, i }
+        return { list, i }
     },
 
     _getLine: function (lines, i) {
@@ -244,7 +249,7 @@ module.exports = {
             result = this._parseObject(currentLine, lines, i);
         } else if (currentLine[0] === '[') {
             result = this._parseArray(currentLine, lines, i);
-        } else if (currentLine[0] === '[') {
+        } else if (currentLine[0] === '(') {
             result = this._parseList(currentLine, lines, i);
         } else {
             throw `line ${i + 1}: Expected either { or [ in "${currentLine}"`;
