@@ -252,7 +252,7 @@ module.exports = {
         } else if (currentLine[0] === '(') {
             result = this._parseList(currentLine, lines, i);
         } else {
-            throw `line ${i + 1}: Expected either { or [ in "${currentLine}"`;
+            throw `line ${i + 1}: Expected {, [, or ( in "${currentLine}"`;
         }
         dbg.end();
         return result;

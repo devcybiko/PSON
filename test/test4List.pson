@@ -1,3 +1,4 @@
 (
-  list: (fname: text, lname: text, street:text, city:text, state:text, zip:text, phone:text, submit:button)
+  form: (fname: text, lname: text, street:text, city:text, state:text, zip:text, phone:text, submit:button)
+  form: (text: fname, text: lname, text:street, text:city, text:state, text:zip, text:phone, button:submit)
 )
