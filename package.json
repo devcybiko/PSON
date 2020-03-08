@@ -1,7 +1,6 @@
 {
-  "name": "PSON",
+  "name": "pson",
   "version": "1.0.0",
-  "description": "",
   "main": "PSON.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,5 +9,15 @@
   "license": "ISC",
   "dependencies": {
     "glsfiles": "^1.0.13"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devcybiko/PSON.git"
+  },
+  "bugs": {
+    "url": "https://github.com/devcybiko/PSON/issues"
+  },
+  "homepage": "https://github.com/devcybiko/PSON#readme",
+  "description": ""
 }
