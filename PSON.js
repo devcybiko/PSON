@@ -37,10 +37,10 @@ const is = require('./glschar');
 const dbg = require('glstools').debug;
 var Map = require("collections/map");
 
-const USEMAP = true;
+const USEMAP = false;
 
-dbg.on();
-dbg.set(dbg.VERBOSE)
+dbg.off();
+//dbg.set(dbg.VERBOSE)
 
 module.exports = {
     _getLine: function (lines, i) {
@@ -164,11 +164,9 @@ module.exports = {
                 let [ key, value, next ] = this._parseKeyValue(items[j], lines, i);
                 USEMAP ? obj.set(key, value) : obj[key] = value;
             }
-            i++;
             dbg.end();
             return [ obj, i ];
         }
-        i++;
         while (true) {
             let [line, next] = this._getLine(lines, i);
             i = next;
@@ -193,19 +191,17 @@ module.exports = {
             let items = this._split(line, ',').map(item => this._escape(item.trim()));
             return [ items, i ]
         }
-        i++;
         while (true) {
             let [line, next] = this._getLine(lines, i);
             i = next;
             if (line === ']') {
                 break;
             } else if (line[0] === '{' || line[0] === '[' || line[0] === '(') {
-                let [obj, ] = this._parseMain(line, lines, i);
-                obj.push(foo.obj);
-                i = foo.i;
+                let [newObj, next] = this._parseMain(line, lines, i);
+                obj.push(newObj);
+                i = next;
             } else { // must be text
                 obj.push(this._escape(line));
-                i++;
             }
         }
         dbg.end();
@@ -222,18 +218,15 @@ module.exports = {
                 let [ key, value, next ] = this._parseKeyValue(items[j], lines, i);
                 obj.push([key, value]);
             }
-            i++;
             dbg.verbose(obj);
             dbg.verbose(i);
             dbg.end();
             return [ obj, i ];
         }
-        i++;
         while (true) {
             let [line, next] = this._getLine(lines, i);
             i = next;
             if (line === ')') {
-                i++;
                 break;
             } else if (is.var(line[0])) {
                 let [key, value, next] = this._parseKeyValue(line, lines, i);

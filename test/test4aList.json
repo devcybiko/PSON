@@ -37,11 +37,56 @@
     ]
   ],
   [
-    "text",
-    "phone"
+    "form2",
+    [
+      [
+        "text",
+        {
+          "name": "fname",
+          "type": "namecase"
+        }
+      ],
+      [
+        "text",
+        "lname"
+      ],
+      [
+        "text",
+        "street"
+      ],
+      [
+        "text",
+        "city"
+      ],
+      [
+        "text",
+        "state"
+      ],
+      [
+        "text",
+        "zip"
+      ],
+      [
+        "text",
+        "phone"
+      ],
+      [
+        "button",
+        "submit"
+      ]
+    ]
   ],
   [
-    "button",
-    "submit"
+    "form3",
+    {
+      "fname": "",
+      "lname": "",
+      "street": "",
+      "city": "",
+      "state": "",
+      "zip": "",
+      "phone": "",
+      "submit": ""
+    }
   ]
 ]
