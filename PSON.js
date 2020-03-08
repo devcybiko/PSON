@@ -105,18 +105,27 @@ module.exports = {
         } else {
             throw Error(`line ${i + 1}: missing colon in "${line}"`); // throw an error if we MUST have a colon
         }
+        while ((typeof value === String) && value.endsWith('\\')) {
+            value = value.substring(0, value.length - 1); // remove backslash
+            let [line, next] = this._getLine(lines, i);
+            i = next;
+            value += line.trim(); // append next line
+            i++;
+        }
         if (value[0] === '{' || value[0] === '[' || value[0] === '(') {
-            value = this._parseMain(value, lines, i);
-            value = value.obj;
+            let result = this._parseMain(value, lines, i);
+            value = result.obj;
+            i = result.i;
         } else {
             value = this._escape(value);
         }
         dbg.end();
-        return { key, value };
+        return { key, value, i };
     },
     _parseKeyValues: function (currentLine, lines, i) {
         dbg.begin();
-        let { key, value } = this._parseKeyValue(currentLine, lines, i);
+        let { key, value, next } = this._parseKeyValue(currentLine, lines, i);
+        i = next;
         if (value === '{' || value === '[' || value === '(') { // we're creating a multi-line array or object
             let result = this._parseMain(value, lines, i);
             i = result.i;
@@ -133,13 +142,6 @@ module.exports = {
         //     return { key, value, i };
         }
         i++;
-        while ((typeof value === String) && value.endsWith('\\')) {
-            value = value.substring(0, value.length - 1); // remove backslash
-            let [line, next] = this._getLine(lines, i);
-            i = next;
-            value += line.trim(); // append next line
-            i++;
-        }
         dbg.end();
         return { key, value, i };
     },
@@ -150,7 +152,8 @@ module.exports = {
             let line = currentLine.substring(1, currentLine.length - 1);
             let items = this._split(line, ',').map(item => this._escape(item.trim()));
             for (let j = 0; j < items.length; j++) {
-                let { key, value } = this._parseKeyValue(items[j], lines, i);
+                let { key, value, next } = this._parseKeyValue(items[j], lines, i);
+                i = next;
                 USEMAP ? obj.set(key, value) : obj[key] = value;
             }
             i++;
@@ -211,7 +214,8 @@ module.exports = {
             let line = currentLine.substring(1, currentLine.length - 1);
             let items = this._split(line, ',').map(item => this._escape(item.trim()));
             for (let j = 0; j < items.length; j++) {
-                let { key, value } = this._parseKeyValue(items[j], lines, i);
+                let { key, value, next } = this._parseKeyValue(items[j], lines, i);
+                i = next;
                 obj.push([key, value]);
             }
             i++;
