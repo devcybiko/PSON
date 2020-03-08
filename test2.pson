@@ -1,0 +1,29 @@
+[
+  {
+    fullSongFname: data/music/10secs-1960s.mp3/The_Lovin'_Spoonful@Darling_Be_Home_Soon@Anthology.mp3
+    source: Casey Kasem
+    songFname: The_Lovin'_Spoonful@Darling_Be_Home_Soon@Anthology.mp3
+    headline:
+    body: In the AMC television series Mad Men, which is set in the 1960s,\
+the characters Sally Draper and Glen Bishop are fans of the band. \
+The band's song, Butchie's Tune, is featured in the penultimate episode of the series' fifth season. \
+Jazz saxophonist Bud Shank released an album of jazz covers of Lovin' Spoonful songs A Spoonful of Jazz in 1967.
+    exitline: And now here's The Lovin' Spoonful, with their hit song, Darling Be Home Soon
+    voicefile: data/speechfiles.mp3/The_Lovin'_Spoonful@Darling_Be_Home_Soon@Anthology.mp3
+  }
+  {
+    fullSongFname: data/music/10secs-1960s.mp3/The_Lovin'_Spoonful@Do_You_Believe_in_Magic@Do_You_Believe_in_Magic.mp3
+    source: Casey Kasem
+    songFname: The_Lovin'_Spoonful@Do_You_Believe_in_Magic@Do_You_Believe_in_Magic.mp3
+    headline:
+    body: The band's name was inspired by some lines in a song of Mississippi John Hurt called the \Coffee Blues\. John Sebastian and others in the jug-folk scene of the time such as Geoff Muldaur credit Fritz Richmond for suggesting the name.
+    exitline: And now here's The Lovin' Spoonful, with their hit song, Do You Believe in Magic
+    voicefile: data/speechfiles.mp3/The_Lovin'_Spoonful@Do_You_Believe_in_Magic@Do_You_Believe_in_Magic.mp3
+  }
+  [
+      this is a test
+      this is too
+      so is this
+  ]
+  [this, is, a, one-line, array]
+]
