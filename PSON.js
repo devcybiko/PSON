@@ -120,6 +120,13 @@ module.exports = {
             value = result.obj;
             dbg.end();
             return { key, value, i };
+        } else if (value === "") { // the type of object is on the next line
+            let [line, next] = this._getLine(lines, i);
+            let result = this._parseMain(line, lines, next);
+            i = result.i;
+            value = result.obj;
+            dbg.end();
+            return { key, value, i };
         }
         i++;
         while ((typeof value === String) && value.endsWith('\\')) {
