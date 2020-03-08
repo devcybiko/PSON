@@ -59,6 +59,7 @@ module.exports = {
         }
         dbg.verbose(`${i}: ${line}`);
         dbg.end()
+        i++;
         return [line, i];
     },
     _split: function (s, c) {
@@ -161,7 +162,6 @@ module.exports = {
             let items = this._split(line, ',').map(item => this._escape(item.trim()));
             for (let j = 0; j < items.length; j++) {
                 let [ key, value, next ] = this._parseKeyValue(items[j], lines, i);
-                i = next;
                 USEMAP ? obj.set(key, value) : obj[key] = value;
             }
             i++;
@@ -173,12 +173,11 @@ module.exports = {
             let [line, next] = this._getLine(lines, i);
             i = next;
             if (line === '}') {
-                i++;
                 break;
             } else if (is.var(line[0])) {
-                let foo = this._parseKeyValue(line, lines, i);
-                USEMAP ? obj.set(foo.key, foo.value) : obj[foo.key] = foo.value;
-                i = foo.i;
+                let [key, value, next] = this._parseKeyValue(line, lines, i);
+                USEMAP ? obj.set(key, value) : obj[key] = value;
+                i = next
             } else {
                 throw `line: ${i + 1}: parse error in "${line}"`;
             }
@@ -192,7 +191,6 @@ module.exports = {
         if (currentLine.endsWith(']')) { // handle one-line entry
             let line = currentLine.substring(1, currentLine.length - 1);
             let items = this._split(line, ',').map(item => this._escape(item.trim()));
-            i++;
             return [ items, i ]
         }
         i++;
@@ -200,10 +198,9 @@ module.exports = {
             let [line, next] = this._getLine(lines, i);
             i = next;
             if (line === ']') {
-                i++;
                 break;
             } else if (line[0] === '{' || line[0] === '[' || line[0] === '(') {
-                let foo = this._parseMain(line, lines, i);
+                let [obj, ] = this._parseMain(line, lines, i);
                 obj.push(foo.obj);
                 i = foo.i;
             } else { // must be text
