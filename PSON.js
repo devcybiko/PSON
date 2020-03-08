@@ -39,7 +39,7 @@ var Map = require("collections/map");
 
 const USEMAP = true;
 
-dbg.on();
+dbg.off();
 
 module.exports = {
     _getLine: function (lines, i) {
@@ -138,7 +138,7 @@ module.exports = {
             let [obj, next] = this._parseMain(value, lines, i); // multi-line object
             dbg.verbose({next, i});
             value = obj;
-            i = next;
+            i = next + 1;
         } else if (value[0] === '{' || value[0] === '[' || value[0] === '(') {
             let [obj, next] = this._parseMain(value, lines, i); // single-line object
             value = obj;
@@ -146,6 +146,7 @@ module.exports = {
             i = next;
         } else {
             value = this._escape(value);
+            i++;
         }
         dbg.verbose({key, value, i});
         dbg.end();

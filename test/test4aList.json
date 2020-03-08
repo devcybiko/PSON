@@ -1,65 +1,47 @@
-foo
->>>>>>>>>>parse: 
->>>>>>>>>>_preprocessLines: 
-<<<<<<<<<<_preprocessLines: 
-.........._getLine: 0: (
->>>>>>>>>>_parseMain: 
->>>>>>>>>>_parseList: 
-.........._getLine: 1: form1: (fname: text, lname: text, street:text, city:text, state:text, zip:text, phone:text, submit:button)
->>>>>>>>>>_parseKeyValues: 
->>>>>>>>>>_parseKeyValue: 
->>>>>>>>>>_parseMain: 
->>>>>>>>>>_parseList: 
->>>>>>>>>>_escape: 
-<<<<<<<<<<_escape: 
->>>>>>>>>>_escape: 
-<<<<<<<<<<_escape: 
->>>>>>>>>>_escape: 
-<<<<<<<<<<_escape: 
->>>>>>>>>>_escape: 
-<<<<<<<<<<_escape: 
->>>>>>>>>>_escape: 
-<<<<<<<<<<_escape: 
->>>>>>>>>>_escape: 
-<<<<<<<<<<_escape: 
->>>>>>>>>>_escape: 
-<<<<<<<<<<_escape: 
->>>>>>>>>>_escape: 
-<<<<<<<<<<_escape: 
->>>>>>>>>>_parseKeyValue: 
->>>>>>>>>>_escape: 
-<<<<<<<<<<_escape: 
-<<<<<<<<<<_parseKeyValue: 
->>>>>>>>>>_parseKeyValue: 
->>>>>>>>>>_escape: 
-<<<<<<<<<<_escape: 
-<<<<<<<<<<_parseKeyValue: 
->>>>>>>>>>_parseKeyValue: 
->>>>>>>>>>_escape: 
-<<<<<<<<<<_escape: 
-<<<<<<<<<<_parseKeyValue: 
->>>>>>>>>>_parseKeyValue: 
->>>>>>>>>>_escape: 
-<<<<<<<<<<_escape: 
-<<<<<<<<<<_parseKeyValue: 
->>>>>>>>>>_parseKeyValue: 
->>>>>>>>>>_escape: 
-<<<<<<<<<<_escape: 
-<<<<<<<<<<_parseKeyValue: 
->>>>>>>>>>_parseKeyValue: 
->>>>>>>>>>_escape: 
-<<<<<<<<<<_escape: 
-<<<<<<<<<<_parseKeyValue: 
->>>>>>>>>>_parseKeyValue: 
->>>>>>>>>>_escape: 
-<<<<<<<<<<_escape: 
-<<<<<<<<<<_parseKeyValue: 
->>>>>>>>>>_parseKeyValue: 
->>>>>>>>>>_escape: 
-<<<<<<<<<<_escape: 
-<<<<<<<<<<_parseKeyValue: 
-<<<<<<<<<<_parseList: 
-<<<<<<<<<<_parseMain: 
-<<<<<<<<<<_parseKeyValue: 
-<<<<<<<<<<_parseKeyValues: 
-.........._getLine: NaN: 
+[
+  [
+    "form1",
+    [
+      [
+        "fname",
+        "text"
+      ],
+      [
+        "lname",
+        "text"
+      ],
+      [
+        "street",
+        "text"
+      ],
+      [
+        "city",
+        "text"
+      ],
+      [
+        "state",
+        "text"
+      ],
+      [
+        "zip",
+        "text"
+      ],
+      [
+        "phone",
+        "text"
+      ],
+      [
+        "submit",
+        "button"
+      ]
+    ]
+  ],
+  [
+    "text",
+    "phone"
+  ],
+  [
+    "button",
+    "submit"
+  ]
+]
