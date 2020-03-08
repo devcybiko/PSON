@@ -1,6 +1,6 @@
 (
   form1: (fname: text, lname: text, street:text, city:text, state:text, zip:text, phone:text, submit:button)
-  form2: 
+  form2: \
   (
       text: {name: fname, type: namecase}
       text: lname
