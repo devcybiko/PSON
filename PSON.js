@@ -42,6 +42,24 @@ const USEMAP = true;
 dbg.on();
 
 module.exports = {
+    _getLine: function (lines, i) {
+        dbg.begin()
+        dbg.verbose(i);
+        if (i >= lines.length) throw `ERROR: Unexpected EOF at line ${i}`;
+        let line = "";
+        for (let j = i; j < lines.length; j++) {
+            line += lines[j];
+            i = j;
+            if (line.endsWith("\\")) {
+                line = line.substring(0, line.length - 1);
+                continue;
+            }
+            if (line.length > 0) break;
+        }
+        dbg.verbose(`${i}: ${line}`);
+        dbg.end()
+        return [line, i];
+    },
     _split: function (s, c) {
         let result = [];
         s = s.trim();
@@ -106,44 +124,43 @@ module.exports = {
         } else {
             throw Error(`line ${i + 1}: missing colon in "${line}"`); // throw an error if we MUST have a colon
         }
-        dbg.verbose(value);
-        while (value.endsWith('\\')) {
-            value = value.substring(0, value.length - 1); // remove backslash
-            dbg.verbose(i);
-            dbg.verbose(value);
-            let [line, next] = this._getLine(lines, i);
-            i = next;
-            value += line.trim(); // append next line
-            //i++;
-        }
+        dbg.verbose({value: value});
+        // while (value.endsWith('\\')) {
+        //     value = value.substring(0, value.length - 1); // remove backslash
+        //     dbg.verbose(i);
+        //     dbg.verbose(value);
+        //     let [line, next] = this._getLine(lines, i);
+        //     i = next;
+        //     value += line.trim(); // append next line
+        //     //i++;
+        // }
         if (value === '{' || value === '[' || value === '(') {
             let [obj, next] = this._parseMain(value, lines, i); // multi-line object
-            dbg.verbose(next);
+            dbg.verbose({next, i});
             value = obj;
             i = next;
         } else if (value[0] === '{' || value[0] === '[' || value[0] === '(') {
             let [obj, next] = this._parseMain(value, lines, i); // single-line object
             value = obj;
-            dbg.verbose(next);
-            dbg.verbose(i);
+            dbg.verbose({next, i});
             i = next;
         } else {
             value = this._escape(value);
         }
-        dbg.verbose(i);
+        dbg.verbose({key, value, i});
         dbg.end();
         return [ key, value, i ];
     },
-    _parseKeyValues: function (currentLine, lines, i) {
-        dbg.begin();
-        let [ key, value, next ] = this._parseKeyValue(currentLine, lines, i);
-        i = next;
-        i++;
-        dbg.verbose(next);
-        dbg.verbose(i);
-        dbg.end();
-        return [ key, value, i ];
-    },
+    // _parseKeyValues: function (currentLine, lines, i) {
+    //     dbg.begin();
+    //     let [ key, value, next ] = this._parseKeyValue(currentLine, lines, i);
+    //     i = next;
+    //     i++;
+    //     dbg.verbose(next);
+    //     dbg.verbose(i);
+    //     dbg.end();
+    //     return [ key, value, i ];
+    // },
     _parseObject: function (currentLine, lines, i) { // parses one object and returns that object and index
         dbg.begin();
         let obj = USEMAP ? new Map() : {};
@@ -167,7 +184,7 @@ module.exports = {
                 i++;
                 break;
             } else if (is.var(line[0])) {
-                let foo = this._parseKeyValues(line, lines, i);
+                let foo = this._parseKeyValue(line, lines, i);
                 USEMAP ? obj.set(foo.key, foo.value) : obj[foo.key] = foo.value;
                 i = foo.i;
             } else {
@@ -232,7 +249,7 @@ module.exports = {
                 i++;
                 break;
             } else if (is.var(line[0])) {
-                let [key, value, next] = this._parseKeyValues(line, lines, i);
+                let [key, value, next] = this._parseKeyValue(line, lines, i);
                 obj.push([key, value]);
                 i = next;
             } else {
@@ -245,24 +262,7 @@ module.exports = {
         return [ obj, i ]
     },
 
-    _getLine: function (lines, i) {
-        dbg.begin()
-        dbg.verbose(i);
-        if (i >= lines.length) throw `ERROR: Unexpected EOF at line ${i}`;
-        let line = "";
-        for (let j = i; j < lines.length; j++) {
-            line += lines[j];
-            i = j;
-            if (line.endsWith("\\")) {
-                line = line.substring(0, line.length - 1);
-                continue;
-            }
-            if (line.length > 0) break;
-        }
-        dbg.verbose(`${i}: ${line}`);
-        dbg.end()
-        return [line, i];
-    },
+
 
     _parseMain: function (currentLine, lines, i) { // the full string and an index into the string, returns {object, i}
         dbg.begin();
