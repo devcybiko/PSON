@@ -39,7 +39,8 @@ var Map = require("collections/map");
 
 const USEMAP = true;
 
-dbg.off();
+dbg.on();
+dbg.set(dbg.VERBOSE)
 
 module.exports = {
     _getLine: function (lines, i) {
@@ -125,30 +126,20 @@ module.exports = {
             throw Error(`line ${i + 1}: missing colon in "${line}"`); // throw an error if we MUST have a colon
         }
         dbg.verbose({value: value});
-        // while (value.endsWith('\\')) {
-        //     value = value.substring(0, value.length - 1); // remove backslash
-        //     dbg.verbose(i);
-        //     dbg.verbose(value);
-        //     let [line, next] = this._getLine(lines, i);
-        //     i = next;
-        //     value += line.trim(); // append next line
-        //     //i++;
-        // }
         if (value === '{' || value === '[' || value === '(') {
             let [obj, next] = this._parseMain(value, lines, i); // multi-line object
-            dbg.verbose({next, i});
+            dbg.verbose({next, i, value});
             value = obj;
-            i = next + 1;
+            i = next;
         } else if (value[0] === '{' || value[0] === '[' || value[0] === '(') {
             let [obj, next] = this._parseMain(value, lines, i); // single-line object
             value = obj;
-            dbg.verbose({next, i});
+            dbg.verbose({next, i, value});
             i = next;
         } else {
             value = this._escape(value);
-            i++;
         }
-        dbg.verbose({key, value, i});
+        dbg.terse({key, value, i});
         dbg.end();
         return [ key, value, i ];
     },
@@ -232,7 +223,6 @@ module.exports = {
             let items = this._split(line, ',').map(item => this._escape(item.trim()));
             for (let j = 0; j < items.length; j++) {
                 let [ key, value, next ] = this._parseKeyValue(items[j], lines, i);
-                i = next;
                 obj.push([key, value]);
             }
             i++;
