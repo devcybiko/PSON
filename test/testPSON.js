@@ -4,23 +4,19 @@ const gls = require('glstools').files;
 function test_files() {
     let files = gls.readDir('.', file => file.endsWith(".pson"));
     for(let file of files) {
-        let pson = gls.read(file).trim();
-        let result = PSON.parse(pson);
-        let json = JSON.stringify(result, null, 2).trim();
-        let textFile = file.replace(".pson", ".txt");
-        let text = gls.read(textFile);
-        console.log(`${json.length} ${text.length}`);
+        let text = gls.read(file).trim();
+        let obj = PSON.parse(text);
+        let pson = JSON.stringify(obj, null, 2).trim();
+        let jsonFile = file.replace(".pson", ".json");
+        let json = gls.read(jsonFile).trim();
         for(let i=0; i<json.length; i++) {
-            if (json[i] !== text[i]) {
-                console.log(`${i} ${json[i]} ${text[i]}`);
+            if (json[i] !== pson[i]) {
+                console.error(`ERROR-NO-MATCH ${i} ${json[i]} ${pson[i]}`);
                 break;
             }
         }
         if (json !== text) {
-            console.error(pson);
-            console.log(json);
-            console.error(text);
-            console.error(`ERROR: ${file} did not match ${textFile}`);
+            console.error(`ERROR: ${file} did not match ${jsonFile}`);
             break;
         }
     }
