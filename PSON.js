@@ -35,6 +35,9 @@ stringify() - serializes an object into PSON. All objects are ignored.
 
 const is = require('./glschar');
 const dbg = require('./glsdebug');
+var Map = require("collections/map");
+
+const USEMAP = true;
 
 dbg.off();
 
@@ -121,6 +124,7 @@ module.exports = {
             dbg.end();
             return { key, value, i };
         } else if (value === "") { // the type of object is on the next line
+            i++;
             let [line, next] = this._getLine(lines, i);
             let result = this._parseMain(line, lines, next);
             i = result.i;
@@ -141,13 +145,13 @@ module.exports = {
     },
     _parseObject: function (currentLine, lines, i) { // parses one object and returns that object and index
         dbg.begin();
-        let obj = {};
+        let obj = USEMAP ? new Map() : {};
         if (currentLine.endsWith('}')) { // handle one-line entry
             let line = currentLine.substring(1, currentLine.length - 1);
             let items = this._split(line, ',').map(item => this._escape(item.trim()));
             for (let j = 0; j < items.length; j++) {
                 let { key, value } = this._parseKeyValue(items[j], lines, i);
-                obj[key] = value;
+                USEMAP ? obj.set(key, value) : obj[key] = value;
             }
             i++;
             dbg.end();
@@ -162,7 +166,7 @@ module.exports = {
                 break;
             } else if (is.var(line[0])) {
                 let foo = this._parseKeyValues(line, lines, i);
-                obj[foo.key] = foo.value;
+                USEMAP ? obj.set(foo.key, foo.value) : obj[foo.key] = foo.value;
                 i = foo.i;
             } else {
                 throw `line: ${i + 1}: parse error in "${line}"`;
