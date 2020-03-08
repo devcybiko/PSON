@@ -34,7 +34,7 @@ stringify() - serializes an object into PSON. All objects are ignored.
 */
 
 const is = require('./glschar');
-const dbg = require('./glsdebug');
+const dbg = require('glstools').debug;
 var Map = require("collections/map");
 
 const USEMAP = true;
@@ -105,13 +105,14 @@ module.exports = {
         } else {
             throw Error(`line ${i + 1}: missing colon in "${line}"`); // throw an error if we MUST have a colon
         }
-        while (value.endsWith('\\')) {
-            value = value.substring(0, value.length - 1); // remove backslash
-            let [line, next] = this._getLine(lines, i);
-            i = next;
-            value += line.trim(); // append next line
-            i++;
-        }
+        // while (value.endsWith('\\')) {
+        //     value = value.substring(0, value.length - 1); // remove backslash
+        //     dbg.verbose(i);
+        //     let [line, next] = this._getLine(lines, i);
+        //     i = next;
+        //     value += line.trim(); // append next line
+        //     i++;
+        // }
         if (value === '{' || value === '[' || value === '(') {
             let result = this._parseMain(value, lines, i); // multi-line object
             value = result.obj;
@@ -178,7 +179,7 @@ module.exports = {
         }
         i++;
         while (true) {
-            let [line, next] = this._getLine(lines, i);
+            let {line, next} = this._getLine(lines, i);
             i = next;
             if (line === ']') {
                 i++;
@@ -226,11 +227,14 @@ module.exports = {
                 throw `line: ${i + 1}: parse error in "${line}"`;
             }
         }
+        dbg.verbose({ obj, i });
         dbg.end();
         return { obj, i }
     },
 
     _getLine: function (lines, i) {
+        dbg.begin()
+        dbg.verbose(i);
         if (i >= lines.length) throw `ERROR: Unexpected EOF at line ${i}`;
         let line = "";
         for (let j = i; j < lines.length; j++) {
@@ -243,6 +247,7 @@ module.exports = {
             if (line.length > 0) break;
         }
         dbg.verbose(`${i}: ${line}`);
+        dbg.end()
         return [line, i];
     },
 
@@ -258,6 +263,7 @@ module.exports = {
         } else {
             throw `line ${i + 1}: Expected {, [, or ( in "${currentLine}"`;
         }
+        dbg.verbose(result);
         dbg.end();
         return result;
     },
@@ -272,7 +278,6 @@ module.exports = {
         let [line, i] = this._getLine(lines, 0);
         let result = this._parseMain(line, lines, i);
         dbg.end();
-        console.lo
         return result.obj;
     }
 }
