@@ -228,7 +228,6 @@ module.exports = {
             i++;
             dbg.verbose(obj);
             dbg.verbose(i);
-    
             dbg.end();
             return [ obj, i ];
         }
