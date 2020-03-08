@@ -4,7 +4,7 @@
       array: [a,b,c\s,d\], foo\,bar\,baz, wil\sson\spicket, http://google.com] // comment ignored
   }
   [fname: text, lname: text, street:text, city:text, state:text, zip:text, phone:text, submit:button]
-  [fname: text, lname: text, street:text, city:text, state:text, zip:text, phone:text, submit:button]
+  (fname: text, lname: text, street:text, city:text, state:text, zip:text, phone:text, submit:button)
   {a:a and b, speed: racer, racer: X}
   {a:firstA, a:anotherA, b:firstB, b:nextB}
   {a,b,c,d}

@@ -92,9 +92,16 @@ module.exports = {
     _parseKeyValue: function (line, lines, i) {
         dbg.begin();
         let colon = line.indexOf(':');
-        if (colon < 0) throw Error(`line ${i + 1}: missing colon in "${line}"`);
-        let key = line.substring(0, colon);
-        let value = line.substring(colon + 1).trim();
+        let key, value;
+        if (colon > 0) {
+            key = line.substring(0, colon);
+            value = line.substring(colon + 1).trim();
+        } else if (colon === -1) {
+            key = line;
+            value = '';
+        } else {
+            throw Error(`line ${i + 1}: missing colon in "${line}"`); // throw an error if we MUST have a colon
+        }
         if (value.startsWith('{') || value.startsWith("[")) {
             value = this._parseMain(value, lines, i);
             value = value.obj;
@@ -107,7 +114,7 @@ module.exports = {
     _parseKeyValues: function (currentLine, lines, i) {
         dbg.begin();
         let { key, value } = this._parseKeyValue(currentLine, lines, i);
-        if (value === '{' || value === '[') { // we're creating a multi-line array or object
+        if (value === '{' || value === '[' || value === '(') { // we're creating a multi-line array or object
             let result = this._parseMain(value, lines, i);
             i = result.i;
             value = result.obj;
@@ -185,10 +192,38 @@ module.exports = {
         dbg.end();
         return { obj, i }
     },
+    _parseList: function (currentLine, lines, i) { // parses one object and returns that object and index
+        dbg.begin();
+        let list = [];
+        if (currentLine.endsWith(')')) { // handle one-line entry
+            let line = currentLine.substring(1, currentLine.length - 1);
+            let items = this._split(line, ',').map(item => this._escape(item.trim()));
+            i++;
+            return { obj: items, i };
+        }
+        i++;
+        while (true) {
+            let [line, next] = this._getLine(lines, i);
+            i = next;
+            if (line === ']') {
+                i++;
+                break;
+            } else if (line[0] === '{' || line[0] === '[') {
+                let foo = this._parseMain(line, lines, i);
+                obj.push(foo.obj);
+                i = foo.i;
+            } else { // must be text
+                obj.push(this._escape(line));
+                i++;
+            }
+        }
+        dbg.end();
+        return { obj, i }
+    },
 
     _getLine: function (lines, i) {
         if (i >= lines.length) throw `ERROR: Unexpected EOF at line ${i}`;
-        let line ="";
+        let line = "";
         for (let j = i; j < lines.length; j++) {
             line += lines[j];
             i = j;
@@ -209,6 +244,8 @@ module.exports = {
             result = this._parseObject(currentLine, lines, i);
         } else if (currentLine[0] === '[') {
             result = this._parseArray(currentLine, lines, i);
+        } else if (currentLine[0] === '[') {
+            result = this._parseList(currentLine, lines, i);
         } else {
             throw `line ${i + 1}: Expected either { or [ in "${currentLine}"`;
         }
