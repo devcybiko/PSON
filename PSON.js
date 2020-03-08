@@ -34,12 +34,12 @@ stringify() - serializes an object into PSON. All objects are ignored.
 */
 
 const is = require('./glschar');
-const dbg = require('glstools').debug;
+const dbg = require('./glsdebug');
 var Map = require("collections/map");
 
 const USEMAP = true;
 
-dbg.off();
+dbg.on();
 
 module.exports = {
     _split: function (s, c) {
@@ -272,6 +272,7 @@ module.exports = {
         let [line, i] = this._getLine(lines, 0);
         let result = this._parseMain(line, lines, i);
         dbg.end();
+        console.lo
         return result.obj;
     }
 }
